@@ -1,80 +1,83 @@
-const CACHE_NAME = 'mi-app-lanzador-cache-v1'; // Cambia 'mi-app-lanzador' si quieres
+const CACHE_NAME = 'GuardarRecibosInversiones-v1';
+// Recursos que queremos cachear
 const urlsToCache = [
-    './', // O './index.html'
-    './index.html',
-    './manifest.json',
-    './favicon.ico',
-    './icons/android-launchericon-192-192.png',
-    './icons/android-launchericon-512-512.png'
-    // NO añadas la URL de Apps Script aquí
+  '/',
+  '/index.html',
+  '/manifest.json',
+  '/favicon.ico',
+  '/icons/icon-192.png',
+  '/icons/icon-512.png'
 ];
 
+// Instalación del service worker
 self.addEventListener('install', event => {
-    event.waitUntil(
-        caches.open(CACHE_NAME)
-            .then(cache => {
-                console.log('[ServiceWorker] Cache abierto, cacheando archivos de la carcasa');
-                return cache.addAll(urlsToCache);
-            })
-            .then(() => self.skipWaiting())
-    );
+  event.waitUntil(
+    caches.open(CACHE_NAME)
+      .then(cache => {
+        console.log('Cache abierto');
+        return cache.addAll(urlsToCache);
+      })
+      .then(() => self.skipWaiting())
+  );
 });
 
+// Activación del service worker
 self.addEventListener('activate', event => {
-    event.waitUntil(
-        caches.keys().then(cacheNames => {
-            return Promise.all(
-                cacheNames.map(cacheName => {
-                    if (cacheName !== CACHE_NAME) {
-                        console.log('[ServiceWorker] Borrando cache antigua:', cacheName);
-                        return caches.delete(cacheName);
-                    }
-                })
-            );
-        }).then(() => self.clients.claim())
-    );
+  event.waitUntil(
+    caches.keys().then(cacheNames => {
+      return Promise.all(
+        cacheNames.filter(cacheName => cacheName !== CACHE_NAME)
+          .map(cacheName => caches.delete(cacheName))
+      );
+    }).then(() => self.clients.claim())
+  );
 });
 
+// Responder a las peticiones de red
 self.addEventListener('fetch', event => {
-    // Solo nos interesa responder a peticiones GET para los recursos de la carcasa
-    if (event.request.method !== 'GET') {
-        return;
-    }
-
-    // Para los archivos de la carcasa, usa estrategia Cache First.
-    // Para todo lo demás (incluyendo la navegación a Apps Script después de la redirección),
-    // simplemente deja que la red lo maneje.
-    const requestUrl = new URL(event.request.url);
-
-    // Verifica si la URL solicitada es uno de los archivos de la carcasa
-    // o si es la raíz (que sirve index.html)
-    const isShellAsset = urlsToCache.some(url => {
-        // Normaliza la URL cacheada para la comparación
-        const cachedUrlPath = new URL(url, self.location.origin).pathname;
-        return requestUrl.pathname === cachedUrlPath;
-    });
-
-
-    if (isShellAsset || requestUrl.pathname === '/' || requestUrl.pathname === (self.location.pathname + 'index.html')) {
-        event.respondWith(
-            caches.match(event.request)
-                .then(cachedResponse => {
-                    if (cachedResponse) {
-                        return cachedResponse;
-                    }
-                    return fetch(event.request).then(networkResponse => {
-                        // Opcional: volver a cachear si algo cambió
-                        // let responseToCache = networkResponse.clone();
-                        // caches.open(CACHE_NAME).then(cache => {
-                        //     cache.put(event.request, responseToCache);
-                        // });
-                        return networkResponse;
-                    });
-                })
-        );
-    } else {
-        // Para cualquier otra petición, simplemente ve a la red.
-        // Esto es importante para que la redirección a Apps Script funcione sin problemas.
-        return;
-    }
+  // Ignorar peticiones que no son http o https
+  if (!event.request.url.startsWith('http')) {
+    return;
+  }
+  
+  // Ignorar peticiones a la API de Google o recursos externos
+  if (event.request.url.includes('script.google.com')) {
+    return;
+  }
+  
+  event.respondWith(
+    caches.match(event.request)
+      .then(cachedResponse => {
+        // Si está en caché, devolver la respuesta cacheada
+        if (cachedResponse) {
+          return cachedResponse;
+        }
+        
+        // Si no está en caché, hacer la petición a la red
+        return fetch(event.request)
+          .then(response => {
+            // Si la respuesta no es válida, simplemente devolverla
+            if (!response || response.status !== 200 || response.type !== 'basic') {
+              return response;
+            }
+            
+            // Clonar la respuesta porque se consume al leerla
+            const responseToCache = response.clone();
+            
+            // Intentar guardar en caché solo URLs válidas
+            if (event.request.url.startsWith('http')) {
+              caches.open(CACHE_NAME)
+                .then(cache => {
+                  cache.put(event.request, responseToCache);
+                });
+            }
+            
+            return response;
+          })
+          .catch(() => {
+            // Si hay un error en la red, intentar devolver la página de inicio
+            return caches.match('/index.html');
+          });
+      })
+  );
 });

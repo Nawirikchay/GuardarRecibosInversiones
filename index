@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CreadorRecibos</title>
+  <title>GuardarRecibosInversiones</title>
   <!-- CAMBIOS AQUÍ para rutas relativas -->
   <link rel="manifest" href="./manifest.json">
   <link rel="icon" href="./favicon.ico">
@@ -108,7 +108,7 @@
       <!-- Asumiendo que quieres usar android-launchericon-192-192.png para el banner -->
       <img src="./icons/android-launchericon-192-192.png" alt="Logo CreadorRecibos" class="banner-logo">
       <div class="banner-text">
-        <div class="banner-title">Instalar CreadorRecibos</div>
+        <div class="banner-title">Instalar GuardarRecibosInversiones</div>
       </div>
     </div>
     <div class="banner-actions">

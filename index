@@ -1,105 +1,225 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Instalar Mi App</title> <!-- O el nombre de tu app -->
-
-    <!-- Manifest -->
-    <link rel="manifest" href="manifest.json">
-
-    <!-- Favicon -->
-    <link rel="icon" href="favicon.ico" type="image/x-icon">
-
-    <!-- Apple Touch Icon -->
-    <link rel="apple-touch-icon" href="icons/android-launchericon-192-192.png">
-
-    <!-- Theme Color -->
-    <meta name="theme-color" content="#007bff"/>  <!-- Cambia este color si lo deseas -->
-
-    <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            background-color: #f0f2f5;
-            text-align: center;
-            padding: 20px;
-            box-sizing: border-box;
-        }
-        h1 {
-            color: #333;
-        }
-        p {
-            color: #555;
-            font-size: 1.1em;
-            max-width: 600px;
-        }
-        .loader {
-            border: 8px solid #f3f3f3;
-            border-radius: 50%;
-            border-top: 8px solid #007bff;
-            width: 60px;
-            height: 60px;
-            animation: spin 2s linear infinite;
-            margin-top: 20px;
-        }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        .hidden {
-            display: none;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CreadorRecibos</title>
+  <!-- CAMBIOS AQUÍ para rutas relativas -->
+  <link rel="manifest" href="./manifest.json">
+  <link rel="icon" href="./favicon.ico">
+  <!-- Opcional: Si quieres un icono específico para Apple touch, y lo tienes en tu carpeta icons -->
+  <!-- <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png"> -->
+  <style>
+    body, html {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      overflow: hidden;
+    }
+    iframe {
+      border: none;
+      width: 100%;
+      height: 100%;
+    }
+    #install-banner {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: #001749;
+      color: white;
+      padding: 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 9999;
+      box-shadow: 0 -2px 10px rgba(0,0,0,0.3);
+      font-family: Arial, sans-serif;
+    }
+    .banner-content {
+      display: flex;
+      align-items: center;
+      flex: 1;
+    }
+    .banner-logo {
+      width: 40px;
+      height: 40px;
+      margin-right: 15px;
+      border-radius: 50%;
+      background: white;
+      padding: 3px;
+      /* Para que el icono dentro se vea bien si tiene transparencia */
+      object-fit: contain; 
+    }
+    .banner-text {
+      flex: 1;
+    }
+    .banner-title {
+      font-weight: bold;
+      font-size: 16px;
+    }
+    .banner-actions {
+      display: flex;
+      align-items: center;
+    }
+    #install-btn {
+      background: #e48410;
+      color: white;
+      border: none;
+      padding: 10px 18px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 14px;
+      transition: background-color 0.2s;
+    }
+    #install-btn:hover {
+      opacity: 0.9;
+    }
+    #close-banner {
+      background: transparent;
+      color: white;
+      border: none;
+      font-size: 24px;
+      cursor: pointer;
+      margin-left: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 30px;
+      height: 30px;
+    }
+    #close-banner:hover {
+      opacity: 0.8;
+    }
+    .hidden {
+      display: none !important;
+    }
+  </style>
 </head>
 <body>
-    <div id="install-info">
-        <h1>Mi Aplicación</h1> <!-- Cambia "Mi Aplicación" -->
-        <p>
-            Para una mejor experiencia, puedes instalar esta aplicación en tu dispositivo.
-            Busca el botón "Instalar", "Añadir a pantalla de inicio" o similar en el menú de tu navegador.
-        </p>
-        <p>
-            Una vez instalada, al abrirla, serás redirigido a la aplicación principal.
-        </p>
+  <!-- Iframe con el contenido de la aplicación -->
+  <iframe src="https://script.google.com/macros/s/AKfycbzsjvi73mjdITKgW3RMja3QtZx6E46KMmNvd_aWOk7rAYFS87lvtEYuCIflgS6b5sKAEw/exec
+  
+  <!-- Banner de instalación mejorado -->
+  <div id="install-banner" class="hidden">
+    <div class="banner-content">
+      <!-- CAMBIO AQUÍ para ruta relativa del logo del banner -->
+      <!-- Asumiendo que quieres usar android-launchericon-192-192.png para el banner -->
+      <img src="./icons/android-launchericon-192-192.png" alt="Logo CreadorRecibos" class="banner-logo">
+      <div class="banner-text">
+        <div class="banner-title">Instalar CreadorRecibos</div>
+      </div>
     </div>
-
-    <div id="loading-info" class="hidden">
-        <h1>Cargando Aplicación...</h1>
-        <div class="loader"></div>
+    <div class="banner-actions">
+      <button id="install-btn">Instalar App</button>
+      <button id="close-banner">×</button>
     </div>
-
-    <script>
-        const appsScriptUrl = "https://script.google.com/macros/s/AKfycbzsjvi73mjdITKgW3RMja3QtZx6E46KMmNvd_aWOk7rAYFS87lvtEYuCIflgS6b5sKAEw/exec";
-
-        // Detectar si la PWA se está ejecutando en modo standalone (instalada)
-        const isInStandaloneMode = () =>
-            (window.matchMedia('(display-mode: standalone)').matches) || (window.navigator.standalone) || document.referrer.includes('android-app://');
-
-        if (isInStandaloneMode()) {
-            // Si está instalada, oculta el mensaje de instalación y muestra el loader, luego redirige
-            document.getElementById('install-info').classList.add('hidden');
-            document.getElementById('loading-info').classList.remove('hidden');
-            window.location.href = appsScriptUrl;
+  </div>
+  
+  <script>
+    // Variables para el banner de instalación
+    let deferredPrompt;
+    const installBanner = document.getElementById('install-banner');
+    const installBtn = document.getElementById('install-btn');
+    const closeBanner = document.getElementById('close-banner');
+    
+    // Eliminar el banner anterior si existe
+    window.addEventListener('load', function() {
+      // Eliminar cualquier banner previo que pudiera estar causando conflicto
+      const oldBanners = document.querySelectorAll('.install-banner, .app-install-banner');
+      oldBanners.forEach(banner => {
+        if (banner !== installBanner) {
+          banner.remove();
         }
-
-        // Registrar el Service Worker
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('service-worker.js')
-                    .then(registration => {
-                        console.log('ServiceWorker registrado con éxito:', registration.scope);
-                    })
-                    .catch(error => {
-                        console.log('Fallo en el registro del ServiceWorker:', error);
-                    });
-            });
+      });
+    });
+    
+    // Registro del service worker después de cargar la página
+    window.addEventListener('load', function() {
+      if ('serviceWorker' in navigator) {
+        // La ruta './service-worker.js' ya es correcta (relativa)
+        navigator.serviceWorker.register('./service-worker.js', { scope: '.' }) // Especificar el scope explícitamente
+          .then(registration => {
+            console.log('Service Worker registrado con éxito:', registration);
+          })
+          .catch(error => {
+            console.log('Fallo en el registro del Service Worker:', error);
+          });
+      }
+    });
+    
+    // Verificar si ya está instalada
+    const isStandalone = window.matchMedia('(display-mode: standalone)').matches || 
+                         window.navigator.standalone || 
+                         (document.referrer && document.referrer.includes('android-app://')); // Añadida comprobación para document.referrer
+    
+    // Capturar evento de instalación
+    window.addEventListener('beforeinstallprompt', (e) => {
+      console.log('Evento beforeinstallprompt capturado');
+      
+      // Prevenir el banner nativo
+      e.preventDefault();
+      
+      // Guardar el evento para usarlo después
+      deferredPrompt = e;
+      
+      // Mostrar nuestro banner personalizado INMEDIATAMENTE después de capturar el evento
+      if (!isStandalone && localStorage.getItem('installBannerClosed') !== 'true') {
+        console.log('Mostrando banner personalizado');
+        setTimeout(() => { // Pequeño timeout para asegurar que el DOM esté listo
+          installBanner.classList.remove('hidden');
+        }, 500); // Ajusta el tiempo si es necesario
+      }
+    });
+    
+    // Manejar clic en el botón de instalación
+    installBtn.addEventListener('click', async () => {
+      if (!deferredPrompt) {
+        console.log('No hay evento de instalación disponible');
+        // Mejorar el mensaje si el banner manual se muestra sin deferredPrompt
+        alert('Para instalar esta aplicación, busca la opción "Instalar" o "Añadir a pantalla de inicio" en el menú de tu navegador.');
+        return;
+      }
+      
+      console.log('Mostrando prompt de instalación');
+      // Mostrar el prompt de instalación
+      deferredPrompt.prompt();
+      
+      // Esperar a que el usuario responda al prompt
+      const choiceResult = await deferredPrompt.userChoice;
+      console.log('Usuario respondió:', choiceResult);
+      
+      // Ocultar el banner después de la decisión del usuario
+      installBanner.classList.add('hidden');
+      
+      // Limpiar la variable, el prompt solo se puede usar una vez
+      deferredPrompt = null;
+    });
+    
+    // Cerrar el banner manualmente
+    closeBanner.addEventListener('click', () => {
+      installBanner.classList.add('hidden');
+      localStorage.setItem('installBannerClosed', 'true'); // Guardar preferencia del usuario
+    });
+    
+    // Ocultar banner cuando se instala
+    window.addEventListener('appinstalled', (e) => {
+      console.log('Aplicación instalada correctamente');
+      installBanner.classList.add('hidden');
+    });
+    
+    // Si no se detecta el evento beforeinstallprompt pero el usuario no ha instalado la app,
+    // y no ha cerrado el banner, mostrar el banner después de un tiempo
+    if (!isStandalone && localStorage.getItem('installBannerClosed') !== 'true') {
+      setTimeout(() => {
+        if (installBanner.classList.contains('hidden') && !deferredPrompt) { 
+          // Solo mostrar si está oculto Y no hay un deferredPrompt (el beforeinstallprompt no se disparó)
+          console.log('Mostrando banner manual después de timeout porque beforeinstallprompt no se disparó o ya se usó');
+          installBanner.classList.remove('hidden');
         }
-    </script>
+      }, 3000); // Tiempo de espera antes de mostrar el banner manual
+    }
+  </script>
 </body>
 </html>

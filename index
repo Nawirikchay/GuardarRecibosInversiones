@@ -4,10 +4,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>GuardarRecibosInversiones</title>
-  <!-- CAMBIOS AQUÍ para rutas relativas -->
+  <!-- Rutas relativas para GitHub Pages -->
   <link rel="manifest" href="./manifest.json">
   <link rel="icon" href="./favicon.ico">
-  <!-- Opcional: Si quieres un icono específico para Apple touch, y lo tienes en tu carpeta icons -->
+  <!-- Opcional: Icono específico para Apple touch -->
   <!-- <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png"> -->
   <style>
     body, html {
@@ -26,7 +26,7 @@
       bottom: 0;
       left: 0;
       right: 0;
-      background: #001749;
+      background: #001749; /* Puedes personalizar este color */
       color: white;
       padding: 15px;
       display: flex;
@@ -48,7 +48,6 @@
       border-radius: 50%;
       background: white;
       padding: 3px;
-      /* Para que el icono dentro se vea bien si tiene transparencia */
       object-fit: contain; 
     }
     .banner-text {
@@ -63,7 +62,7 @@
       align-items: center;
     }
     #install-btn {
-      background: #e48410;
+      background: #e48410; /* Puedes personalizar este color */
       color: white;
       border: none;
       padding: 10px 18px;
@@ -98,15 +97,14 @@
   </style>
 </head>
 <body>
-  <!-- Iframe con el contenido de la aplicación -->
-  <iframe src="https://script.google.com/macros/s/AKfycbzsjvi73mjdITKgW3RMja3QtZx6E46KMmNvd_aWOk7rAYFS87lvtEYuCIflgS6b5sKAEw/exec
+  <!-- Iframe con el contenido de tu aplicación Apps Script -->
+  <iframe src="https://script.google.com/macros/s/AKfycbzsjvi73mjdITKgW3RMja3QtZx6E46KMmNvd_aWOk7rAYFS87lvtEYuCIflgS6b5sKAEw/exec" frameborder="0"></iframe>
   
-  <!-- Banner de instalación mejorado -->
+  <!-- Banner de instalación -->
   <div id="install-banner" class="hidden">
     <div class="banner-content">
-      <!-- CAMBIO AQUÍ para ruta relativa del logo del banner -->
-      <!-- Asumiendo que quieres usar android-launchericon-192-192.png para el banner -->
-      <img src="./icons/android-launchericon-192-192.png" alt="Logo CreadorRecibos" class="banner-logo">
+      <!-- Asumiendo que usas el mismo icono para el banner -->
+      <img src="./icons/android-launchericon-192-192.png" alt="Logo GuardarRecibosInversiones" class="banner-logo">
       <div class="banner-text">
         <div class="banner-title">Instalar GuardarRecibosInversiones</div>
       </div>
@@ -118,13 +116,11 @@
   </div>
   
   <script>
-    // Variables para el banner de instalación
     let deferredPrompt;
     const installBanner = document.getElementById('install-banner');
     const installBtn = document.getElementById('install-btn');
     const closeBanner = document.getElementById('close-banner');
     
-    // Eliminar el banner anterior si existe
     window.addEventListener('load', function() {
       // Eliminar cualquier banner previo que pudiera estar causando conflicto
       const oldBanners = document.querySelectorAll('.install-banner, .app-install-banner');
@@ -133,13 +129,10 @@
           banner.remove();
         }
       });
-    });
-    
-    // Registro del service worker después de cargar la página
-    window.addEventListener('load', function() {
+
       if ('serviceWorker' in navigator) {
-        // La ruta './service-worker.js' ya es correcta (relativa)
-        navigator.serviceWorker.register('./service-worker.js', { scope: '.' }) // Especificar el scope explícitamente
+        // La ruta './service-worker.js' es relativa a la raíz del sitio
+        navigator.serviceWorker.register('./service-worker.js', { scope: '.' }) 
           .then(registration => {
             console.log('Service Worker registrado con éxito:', registration);
           })
@@ -149,76 +142,56 @@
       }
     });
     
-    // Verificar si ya está instalada
     const isStandalone = window.matchMedia('(display-mode: standalone)').matches || 
                          window.navigator.standalone || 
-                         (document.referrer && document.referrer.includes('android-app://')); // Añadida comprobación para document.referrer
+                         (document.referrer && document.referrer.includes('android-app://'));
     
-    // Capturar evento de instalación
     window.addEventListener('beforeinstallprompt', (e) => {
       console.log('Evento beforeinstallprompt capturado');
-      
-      // Prevenir el banner nativo
       e.preventDefault();
-      
-      // Guardar el evento para usarlo después
       deferredPrompt = e;
       
-      // Mostrar nuestro banner personalizado INMEDIATAMENTE después de capturar el evento
-      if (!isStandalone && localStorage.getItem('installBannerClosed') !== 'true') {
+      if (!isStandalone && localStorage.getItem('installBannerClosedGRI') !== 'true') { // Usar una clave única para localStorage
         console.log('Mostrando banner personalizado');
-        setTimeout(() => { // Pequeño timeout para asegurar que el DOM esté listo
+        setTimeout(() => { 
           installBanner.classList.remove('hidden');
-        }, 500); // Ajusta el tiempo si es necesario
+        }, 500);
       }
     });
     
-    // Manejar clic en el botón de instalación
     installBtn.addEventListener('click', async () => {
       if (!deferredPrompt) {
         console.log('No hay evento de instalación disponible');
-        // Mejorar el mensaje si el banner manual se muestra sin deferredPrompt
         alert('Para instalar esta aplicación, busca la opción "Instalar" o "Añadir a pantalla de inicio" en el menú de tu navegador.');
         return;
       }
       
       console.log('Mostrando prompt de instalación');
-      // Mostrar el prompt de instalación
       deferredPrompt.prompt();
-      
-      // Esperar a que el usuario responda al prompt
       const choiceResult = await deferredPrompt.userChoice;
       console.log('Usuario respondió:', choiceResult);
       
-      // Ocultar el banner después de la decisión del usuario
       installBanner.classList.add('hidden');
-      
-      // Limpiar la variable, el prompt solo se puede usar una vez
       deferredPrompt = null;
     });
     
-    // Cerrar el banner manualmente
     closeBanner.addEventListener('click', () => {
       installBanner.classList.add('hidden');
-      localStorage.setItem('installBannerClosed', 'true'); // Guardar preferencia del usuario
+      localStorage.setItem('installBannerClosedGRI', 'true'); // Usar una clave única para localStorage
     });
     
-    // Ocultar banner cuando se instala
     window.addEventListener('appinstalled', (e) => {
       console.log('Aplicación instalada correctamente');
       installBanner.classList.add('hidden');
     });
     
-    // Si no se detecta el evento beforeinstallprompt pero el usuario no ha instalado la app,
-    // y no ha cerrado el banner, mostrar el banner después de un tiempo
-    if (!isStandalone && localStorage.getItem('installBannerClosed') !== 'true') {
+    if (!isStandalone && localStorage.getItem('installBannerClosedGRI') !== 'true') { // Usar una clave única
       setTimeout(() => {
         if (installBanner.classList.contains('hidden') && !deferredPrompt) { 
-          // Solo mostrar si está oculto Y no hay un deferredPrompt (el beforeinstallprompt no se disparó)
-          console.log('Mostrando banner manual después de timeout porque beforeinstallprompt no se disparó o ya se usó');
+          console.log('Mostrando banner manual (timeout) porque beforeinstallprompt no se disparó o ya se usó');
           installBanner.classList.remove('hidden');
         }
-      }, 3000); // Tiempo de espera antes de mostrar el banner manual
+      }, 3000); 
     }
   </script>
 </body>

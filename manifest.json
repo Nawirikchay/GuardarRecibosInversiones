@@ -1,57 +1,50 @@
 {
-  "short_name": "GuardarRecibosInversiones",
+  "short_name": "GuardarRecibos",
   "name": "GuardarRecibosInversiones",
-  "description": "Aplicación GuardarRecibosInversiones", // Moví description aquí para mejor orden
-  "lang": "es", // Asumo español, ajústalo si es necesario
-  "start_url": ".", // O "./index.html" - Asume que index.html está en la raíz
-  "scope": ".",     // Asume que la PWA controla todo desde la raíz del repo
+  "description": "Aplicación para gestionar y guardar recibos de inversiones.",
+  "lang": "es-ES",
+  "start_url": "./index.html",
+  "scope": ".",
   "display": "standalone",
-  "background_color": "#f5f5f5",
-  "theme_color": "#005cdb",
+  "background_color": "#ffffff",
+  "theme_color": "#003366",
+  "orientation": "portrait-primary",
   "icons": [
-    // Iconos principales para PWA (Android y la mayoría de los navegadores)
-    // Asegúrate que estos archivos estén en tu carpeta "icons/"
     {
-      "src": "icons/android-launchericon-512-512.png", // Nombre exacto del archivo generado
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any maskable" // Usa "maskable" si los iconos están diseñados para ello
-    },
-    {
-      "src": "icons/android-launchericon-192-192.png", // Nombre exacto del archivo generado
-      "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "any maskable"
-    },
-    // Iconos adicionales que PWA Builder generó para Android
-    // (El navegador elegirá el más adecuado)
-    {
-      "src": "icons/android-launchericon-144-144.png",
-      "sizes": "144x144",
-      "type": "image/png",
-      "purpose": "any" // O "maskable" si aplica
-    },
-    {
-      "src": "icons/android-launchericon-96-96.png",
-      "sizes": "96x96",
+      "src": "./icons/android-launchericon-48-48.png",
+      "sizes": "48x48",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "icons/android-launchericon-72-72.png",
+      "src": "./icons/android-launchericon-72-72.png",
       "sizes": "72x72",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "icons/android-launchericon-48-48.png",
-      "sizes": "48x48",
+      "src": "./icons/android-launchericon-96-96.png",
+      "sizes": "96x96",
       "type": "image/png",
       "purpose": "any"
+    },
+    {
+      "src": "./icons/android-launchericon-144-144.png",
+      "sizes": "144x144",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./icons/android-launchericon-192-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "./icons/android-launchericon-512-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
     }
-    // No necesitas incluir todos los cientos de iconos de Windows o iOS aquí
-    // para una PWA web estándar, a menos que tengas una razón específica.
-    // Los iconos de arriba son los más importantes para la instalabilidad PWA
-    // y la apariencia en Android y la mayoría de los prompts de escritorio.
   ]
 }

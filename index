@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-Z">
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mi PWA de Apps Script</title>
+    <title>Instalar Mi App</title> <!-- O el nombre de tu app -->
 
     <!-- Manifest -->
     <link rel="manifest" href="manifest.json">
@@ -11,41 +11,83 @@
     <!-- Favicon -->
     <link rel="icon" href="favicon.ico" type="image/x-icon">
 
-    <!-- Apple Touch Icon (opcional, pero buena práctica) -->
+    <!-- Apple Touch Icon -->
     <link rel="apple-touch-icon" href="icons/android-launchericon-192-192.png">
 
-    <!-- Theme Color (para la barra de herramientas del navegador) -->
+    <!-- Theme Color -->
     <meta name="theme-color" content="#007bff"/>  <!-- Cambia este color si lo deseas -->
 
     <style>
-        body, html {
-            margin: 0;
-            padding: 0;
-            height: 100%;
-            overflow: hidden; /* Para evitar barras de scroll dobles */
-            font-family: sans-serif;
-            background-color: #f0f0f0; /* Color de fondo mientras carga el iframe */
-        }
-        #appFrame {
-            width: 100%;
-            height: 100%;
-            border: none; /* Sin bordes para el iframe */
-        }
-        #loading {
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
-            height: 100%;
-            font-size: 1.2em;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f2f5;
+            text-align: center;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        h1 {
+            color: #333;
+        }
+        p {
             color: #555;
+            font-size: 1.1em;
+            max-width: 600px;
+        }
+        .loader {
+            border: 8px solid #f3f3f3;
+            border-radius: 50%;
+            border-top: 8px solid #007bff;
+            width: 60px;
+            height: 60px;
+            animation: spin 2s linear infinite;
+            margin-top: 20px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .hidden {
+            display: none;
         }
     </style>
 </head>
 <body>
-    <div id="loading">Cargando aplicación...</div>
-    <iframe id="appFrame" src="https://script.google.com/macros/s/AKfycbzsjvi73mjdITKgW3RMja3QtZx6E46KMmNvd_aWOk7rAYFS87lvtEYuCIflgS6b5sKAEw/exec" title="Mi Aplicación de Apps Script"></iframe>
+    <div id="install-info">
+        <h1>Mi Aplicación</h1> <!-- Cambia "Mi Aplicación" -->
+        <p>
+            Para una mejor experiencia, puedes instalar esta aplicación en tu dispositivo.
+            Busca el botón "Instalar", "Añadir a pantalla de inicio" o similar en el menú de tu navegador.
+        </p>
+        <p>
+            Una vez instalada, al abrirla, serás redirigido a la aplicación principal.
+        </p>
+    </div>
+
+    <div id="loading-info" class="hidden">
+        <h1>Cargando Aplicación...</h1>
+        <div class="loader"></div>
+    </div>
 
     <script>
+        const appsScriptUrl = "https://script.google.com/macros/s/AKfycbzsjvi73mjdITKgW3RMja3QtZx6E46KMmNvd_aWOk7rAYFS87lvtEYuCIflgS6b5sKAEw/exec";
+
+        // Detectar si la PWA se está ejecutando en modo standalone (instalada)
+        const isInStandaloneMode = () =>
+            (window.matchMedia('(display-mode: standalone)').matches) || (window.navigator.standalone) || document.referrer.includes('android-app://');
+
+        if (isInStandaloneMode()) {
+            // Si está instalada, oculta el mensaje de instalación y muestra el loader, luego redirige
+            document.getElementById('install-info').classList.add('hidden');
+            document.getElementById('loading-info').classList.remove('hidden');
+            window.location.href = appsScriptUrl;
+        }
+
         // Registrar el Service Worker
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
@@ -58,13 +100,6 @@
                     });
             });
         }
-
-        // Ocultar mensaje de carga una vez que el iframe haya cargado
-        const iframe = document.getElementById('appFrame');
-        const loadingDiv = document.getElementById('loading');
-        iframe.addEventListener('load', () => {
-            loadingDiv.style.display = 'none';
-        });
     </script>
 </body>
 </html>

@@ -1,7 +1,7 @@
 {
-    "name": "Mi PWA de Apps Script",
-    "short_name": "MiPWA",
-    "description": "Una Progressive Web App creada con Google Apps Script y alojada en GitHub Pages.",
+    "name": "Nombre Completo de tu App",
+    "short_name": "NombreCorto",
+    "description": "Descripción de tu PWA de Apps Script.",
     "lang": "es-ES",
     "start_url": "./index.html",
     "scope": "./",
